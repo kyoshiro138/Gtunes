@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gtunes</string>
+    <string name="button_google_connect">Connect Google</string>
 </resources>
