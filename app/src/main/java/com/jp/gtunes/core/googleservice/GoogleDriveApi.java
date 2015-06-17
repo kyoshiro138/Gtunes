@@ -29,7 +29,6 @@ public class GoogleDriveApi {
     public static final String SCOPE_DRIVE_APPDATA = "https://www.googleapis.com/auth/drive.appdata";
     public static final String SCOPE_DRIVE_APPS_READONLY = "https://www.googleapis.com/auth/drive.apps.readonly";
 
-
     private FragmentActivity mActivity;
     private OnGoogleAuthListener mListener;
 

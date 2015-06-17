@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.jp.gtunes.core.fragment.BaseFragment;
@@ -43,5 +44,38 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
             transaction.addToBackStack(null);
             transaction.commit();
         }
+    }
+
+    public final void navigateToFragment(BaseFragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(android.support.v7.appcompat.R.anim.abc_fade_in, android.support.v7.appcompat.R.anim.abc_fade_out);
+        transaction.replace(getDrawerContentContainerLayoutId(), fragment, fragment.getClass().getSimpleName());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public final void navigateToFirstLevelFragment(BaseFragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(android.support.v7.appcompat.R.anim.abc_fade_in, android.support.v7.appcompat.R.anim.abc_fade_out);
+        transaction.replace(getDrawerContentContainerLayoutId(), fragment, fragment.getClass().getSimpleName());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public final void navigateBack() {
+        getSupportFragmentManager().popBackStack();
+    }
+
+    public final void navigateBack(int count) {
+        for (int i = 0; i < count && getSupportFragmentManager().getBackStackEntryCount() - i > 1; i++) {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    public final void navigateBackToFirstLevelFragment() {
+        getSupportFragmentManager().popBackStackImmediate(1, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }

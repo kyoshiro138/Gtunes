@@ -1,14 +1,15 @@
 package com.jp.gtunes.app.googleconnect;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.jp.gtunes.R;
+import com.jp.gtunes.app.musiclist.GoogleMusicListFragment;
 import com.jp.gtunes.core.fragment.BaseFragment;
 import com.jp.gtunes.core.googleservice.GoogleDriveApi;
 import com.jp.gtunes.core.googleservice.OnGoogleAuthListener;
+import com.jp.gtunes.utils.PreferenceUtils;
 
 public class GoogleConnectFragment extends BaseFragment implements View.OnClickListener, OnGoogleAuthListener {
     private GoogleDriveApi driveApi;
@@ -58,7 +59,8 @@ public class GoogleConnectFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void onAuthSuccess(String token) {
-        Toast.makeText(getActivity(), token, Toast.LENGTH_LONG).show();
+        PreferenceUtils.saveValue(getActivity(), "access_token", token, PreferenceUtils.PREFERENCE_TYPE_STRING);
+        navigateTo(new GoogleMusicListFragment(), null);
     }
 
     @Override
