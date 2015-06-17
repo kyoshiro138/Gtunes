@@ -4,6 +4,7 @@ import com.jp.gtunes.R;
 import com.jp.gtunes.app.googleconnect.GoogleConnectFragment;
 import com.jp.gtunes.core.activity.BaseFragmentActivity;
 import com.jp.gtunes.core.fragment.BaseFragment;
+import com.jp.gtunes.core.navigator.BaseNavigator;
 
 public class GtunesFragmentActivity extends BaseFragmentActivity {
     @Override
@@ -12,12 +13,12 @@ public class GtunesFragmentActivity extends BaseFragmentActivity {
     }
 
     @Override
-    protected int getDrawerContentContainerLayoutId() {
+    protected int getContentFragmentId() {
         return R.id.layout_content;
     }
 
     @Override
-    protected BaseFragment getStartupFragment() {
-        return new GoogleConnectFragment();
+    protected BaseNavigator createNavigator() {
+        return new GtunesNavigator(getContentFragmentId(), getSupportFragmentManager());
     }
 }

@@ -60,7 +60,7 @@ public class GoogleConnectFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onAuthSuccess(String token) {
         PreferenceUtils.saveValue(getActivity(), "access_token", token, PreferenceUtils.PREFERENCE_TYPE_STRING);
-        navigateTo(new GoogleMusicListFragment(), null);
+        getNavigator().navigateTo(new GoogleMusicListFragment(), null);
     }
 
     @Override

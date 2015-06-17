@@ -10,12 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jp.gtunes.core.activity.BaseFragmentActivity;
+import com.jp.gtunes.core.navigator.BaseNavigator;
 
 public abstract class BaseFragment extends Fragment {
     protected static final String KEY_PARAM = "KEY_PARAM";
 
-    protected View mRootView;
+    private View mRootView;
     private BaseFragmentActivity mActivity;
+
+    public View getRootView() {
+        return mRootView;
+    }
+
+    public BaseNavigator getNavigator() {
+        return mActivity.getNavigator();
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -45,19 +54,4 @@ public abstract class BaseFragment extends Fragment {
     protected abstract void bindView(View rootView);
 
     protected abstract void loadData();
-
-    protected final void navigateTo(BaseFragment fragment, @Nullable Parcelable param) {
-        addParam(fragment, param);
-
-        mActivity.navigateToFragment(fragment);
-    }
-
-    private void addParam(BaseFragment fragment, Parcelable param) {
-        if (param != null) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(KEY_PARAM, param);
-
-            fragment.setArguments(bundle);
-        }
-    }
 }
