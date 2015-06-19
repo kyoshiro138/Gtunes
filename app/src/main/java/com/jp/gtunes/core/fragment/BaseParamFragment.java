@@ -13,7 +13,7 @@ public abstract class BaseParamFragment<E extends Parcelable> extends BaseFragme
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            E param = bundle.getParcelable(KEY_PARAM);
+            E param = bundle.getParcelable(getClass().getSimpleName());
 
             loadParam(param);
         }

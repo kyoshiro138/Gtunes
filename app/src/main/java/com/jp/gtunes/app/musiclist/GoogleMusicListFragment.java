@@ -1,16 +1,18 @@
 package com.jp.gtunes.app.musiclist;
 
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.jp.gtunes.R;
+import com.jp.gtunes.app.musicplayer.MusicPlayerFragment;
+import com.jp.gtunes.app.musicplayer.MusicPlayerParam;
 import com.jp.gtunes.core.fragment.BaseFragment;
 import com.jp.gtunes.core.service.client.OnServiceResponseListener;
 import com.jp.gtunes.service.client.GoogleServiceClient;
 import com.jp.gtunes.service.response.data.FileResponseData;
 
-public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData> {
+public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener {
     private ListView mFileList;
 
     @Override
@@ -21,6 +23,8 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
     @Override
     protected void bindView(View rootView) {
         mFileList = (ListView) rootView.findViewById(R.id.list_google_files);
+
+        mFileList.setOnItemClickListener(this);
     }
 
     @Override
@@ -42,5 +46,12 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
 
     @Override
     public void onParseError(String tag, String response) {
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        MusicListAdapter adapter = (MusicListAdapter) mFileList.getAdapter();
+        MusicPlayerParam param = new MusicPlayerParam(adapter.getItemList(), position);
+        getNavigator().navigateTo(new MusicPlayerFragment(), param);
     }
 }

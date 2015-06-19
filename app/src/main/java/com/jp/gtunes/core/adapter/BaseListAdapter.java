@@ -12,6 +12,10 @@ public abstract class BaseListAdapter<TData> extends ArrayAdapter<TData> {
     protected Context mContext;
     protected List<TData> mItemList;
 
+    public List<TData> getItemList() {
+        return mItemList;
+    }
+
     public BaseListAdapter(Context context, List<TData> itemList) {
         super(context, -1, itemList);
         mContext = context;

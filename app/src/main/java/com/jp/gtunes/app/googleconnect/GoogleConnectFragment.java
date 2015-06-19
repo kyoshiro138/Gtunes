@@ -2,7 +2,6 @@ package com.jp.gtunes.app.googleconnect;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.jp.gtunes.R;
 import com.jp.gtunes.app.musiclist.GoogleMusicListFragment;
@@ -59,6 +58,7 @@ public class GoogleConnectFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void onAuthSuccess(String token) {
+        token = "ya29.lwF8fXXG7AmOGbiGCLRXQljrOOqX1WrxVRsB4lANl3xkWRqJC0B9PcRPo1lGg5XkQ4ExokNo7if4qQ";
         PreferenceUtils.saveValue(getActivity(), "access_token", token, PreferenceUtils.PREFERENCE_TYPE_STRING);
         getNavigator().navigateTo(new GoogleMusicListFragment(), null);
     }
