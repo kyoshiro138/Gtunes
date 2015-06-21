@@ -1,19 +1,31 @@
 package com.jp.gtunes.app.musiclist;
 
+import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.jp.gtunes.R;
 import com.jp.gtunes.app.musicplayer.MusicPlayerFragment;
 import com.jp.gtunes.app.musicplayer.MusicPlayerParam;
+import com.jp.gtunes.core.adapter.OnItemButtonClickListener;
+import com.jp.gtunes.core.component.FileDownloader;
 import com.jp.gtunes.core.fragment.BaseFragment;
 import com.jp.gtunes.core.service.client.OnServiceResponseListener;
+import com.jp.gtunes.domain.GoogleFile;
 import com.jp.gtunes.service.client.GoogleServiceClient;
 import com.jp.gtunes.service.response.data.FileResponseData;
+import com.jp.gtunes.utils.PreferenceUtils;
 
-public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener, OnItemButtonClickListener {
     private ListView mFileList;
+    private String mAccessToken;
 
     @Override
     protected int getFragmentLayoutResource() {
@@ -29,7 +41,9 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
 
     @Override
     protected void loadData() {
-        String url = "https://www.googleapis.com/drive/v2/files?fields=etag,items(createdDate,downloadUrl,webContentLink,fileSize,id,mimeType,title),kind,nextLink,nextPageToken,selfLink&q=mimeType='audio/mpeg'";
+        mAccessToken = (String) PreferenceUtils.getValue(getActivity(), "access_token", "", PreferenceUtils.PREFERENCE_TYPE_STRING);
+
+        String url = "https://www.googleapis.com/drive/v2/files?q=mimeType='audio/mpeg'";
         GoogleServiceClient<FileResponseData> client = new GoogleServiceClient<>(getActivity(), "getFiles", url, FileResponseData.class, this);
         client.executeGet();
     }
@@ -37,6 +51,7 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
     @Override
     public void onResponseSuccess(String tag, FileResponseData response) {
         MusicListAdapter adapter = new MusicListAdapter(getActivity(), response.getItems());
+        adapter.setOnItemButtonClickListener(this);
         mFileList.setAdapter(adapter);
     }
 
@@ -53,5 +68,17 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         MusicListAdapter adapter = (MusicListAdapter) mFileList.getAdapter();
         MusicPlayerParam param = new MusicPlayerParam(adapter.getItemList(), position);
         getNavigator().navigateTo(new MusicPlayerFragment(), param);
+    }
+
+    @Override
+    public void onButtonClick(View view) {
+        //TODO: download file
+        GoogleFile googleFile = (GoogleFile) view.getTag();
+
+        String url = String.format("%s&access_token=%s", googleFile.getUrl(), mAccessToken);
+        String dir = Environment.DIRECTORY_DOWNLOADS;
+
+        FileDownloader downloader = new FileDownloader(getActivity(), url, dir);
+        downloader.startDownload("music.mp3");
     }
 }

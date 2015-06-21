@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="72dp">
+    <ImageView
+        android:id="@+id/list_item_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@android:color/holo_purple"
+        android:src="@android:drawable/ic_lock_silent_mode_off"
+        tools:ignore="ContentDescription"/>
+    <ImageButton
+        android:id="@+id/list_item_download_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/holo_purple"
+        android:src="@android:drawable/stat_sys_download"
+        tools:ignore="ContentDescription" />
     <TextView
         android:id="@+id/list_item_music_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/list_item_icon"
+        android:layout_toEndOf="@id/list_item_icon"
+        android:layout_toLeftOf="@id/list_item_download_button"
+        android:layout_toStartOf="@id/list_item_download_button"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"/>
+
 </RelativeLayout>

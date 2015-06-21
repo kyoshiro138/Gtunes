@@ -58,7 +58,6 @@ public class GoogleConnectFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void onAuthSuccess(String token) {
-        token = "ya29.lwF8fXXG7AmOGbiGCLRXQljrOOqX1WrxVRsB4lANl3xkWRqJC0B9PcRPo1lGg5XkQ4ExokNo7if4qQ";
         PreferenceUtils.saveValue(getActivity(), "access_token", token, PreferenceUtils.PREFERENCE_TYPE_STRING);
         getNavigator().navigateTo(new GoogleMusicListFragment(), null);
     }

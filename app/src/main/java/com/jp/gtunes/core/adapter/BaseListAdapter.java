@@ -11,6 +11,7 @@ import java.util.List;
 public abstract class BaseListAdapter<TData> extends ArrayAdapter<TData> {
     protected Context mContext;
     protected List<TData> mItemList;
+    protected OnItemButtonClickListener mButtonClickListener;
 
     public List<TData> getItemList() {
         return mItemList;
@@ -34,6 +35,9 @@ public abstract class BaseListAdapter<TData> extends ArrayAdapter<TData> {
             viewHolder = bindViewHolder(view);
 
             view.setTag(viewHolder);
+            if(view instanceof ViewGroup) {
+                ((ViewGroup)view).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            }
         } else {
             view = convertView;
 
@@ -43,6 +47,10 @@ public abstract class BaseListAdapter<TData> extends ArrayAdapter<TData> {
         loadData(viewHolder, mItemList.get(position));
 
         return view;
+    }
+
+    public void setOnItemButtonClickListener(OnItemButtonClickListener listener) {
+        mButtonClickListener = listener;
     }
 
     protected abstract int getItemLayoutResource();

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.jp.gtunes.core.activity.BaseFragmentActivity;
 import com.jp.gtunes.core.navigator.BaseNavigator;
@@ -47,6 +48,10 @@ public abstract class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         loadData();
+    }
+
+    protected void showToast(CharSequence text) {
+        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
     }
 
     protected abstract int getFragmentLayoutResource();

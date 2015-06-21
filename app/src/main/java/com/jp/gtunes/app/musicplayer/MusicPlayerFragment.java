@@ -2,9 +2,9 @@ package com.jp.gtunes.app.musicplayer;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jp.gtunes.R;
@@ -20,7 +20,9 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     private int mCurrentSongPosition;
     private List<GoogleFile> mSongList;
 
-    private Button mBtnPlay, mBtnPause;
+    private ImageButton mBtnPlay, mBtnPause;
+    private TextView mTextMusicTitle;
+    private TextView mTextCurrentTime, mTextTotalDuration;
 
     @Override
     protected int getFragmentLayoutResource() {
@@ -29,8 +31,12 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
 
     @Override
     protected void bindView(View rootView) {
-        mBtnPlay = (Button) rootView.findViewById(R.id.btn_play);
-        mBtnPause = (Button) rootView.findViewById(R.id.btn_pause);
+        mBtnPlay = (ImageButton) rootView.findViewById(R.id.btn_play);
+        mBtnPause = (ImageButton) rootView.findViewById(R.id.btn_pause);
+
+        mTextMusicTitle = (TextView) rootView.findViewById(R.id.music_title_text);
+        mTextCurrentTime = (TextView) rootView.findViewById(R.id.music_current_time_text);
+        mTextTotalDuration = (TextView) rootView.findViewById(R.id.music_total_duration_text);
 
         rootView.findViewById(R.id.btn_next_song).setOnClickListener(this);
         rootView.findViewById(R.id.btn_previous_song).setOnClickListener(this);
@@ -43,6 +49,8 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
         if (param != null) {
             mSongList = param.getFiles();
             mCurrentSongPosition = param.getSelectedFileIndex();
+
+            play();
         }
     }
 
@@ -69,11 +77,11 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
             case R.id.btn_play:
                 if (mMediaPlayer != null) {
                     mMediaPlayer.start();
+                    mBtnPause.setVisibility(View.VISIBLE);
+                    mBtnPlay.setVisibility(View.GONE);
                 } else {
                     play();
                 }
-                mBtnPause.setVisibility(View.VISIBLE);
-                mBtnPlay.setVisibility(View.GONE);
                 break;
             case R.id.btn_pause:
                 mMediaPlayer.pause();
@@ -92,6 +100,8 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     }
 
     private void play() {
+        mTextMusicTitle.setText(mSongList.get(mCurrentSongPosition).getFileNameWithoutExtension());
+
         String url = mSongList.get(mCurrentSongPosition).getUrl();
         try {
             killMediaPlayer();
@@ -102,6 +112,16 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
+                    mBtnPause.setVisibility(View.VISIBLE);
+                    mBtnPlay.setVisibility(View.GONE);
+
+                    if (mp.getDuration() > 0) {
+                        int minute = mp.getDuration() / (60 * 1000);
+                        int second = (mp.getDuration() / 1000) % 60;
+                        mTextTotalDuration.setText(String.format("%02d:%02d", minute, second));
+                    } else {
+                        mTextTotalDuration.setText("--:--");
+                    }
                 }
             });
             mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
@@ -113,7 +133,21 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
             mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
                 @Override
                 public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                    Log.d("PLAYER", String.valueOf(percent));
+                    int minute = mp.getCurrentPosition() / (60 * 1000);
+                    int second = (mp.getCurrentPosition() / 1000) % 60;
+                    mTextCurrentTime.setText(String.format("%02d:%02d", minute, second));
+                }
+            });
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mBtnPlay.setVisibility(View.VISIBLE);
+                    mBtnPause.setVisibility(View.GONE);
+
+                    if (mCurrentSongPosition < mSongList.size() - 1) {
+                        mCurrentSongPosition++;
+                        play();
+                    }
                 }
             });
 

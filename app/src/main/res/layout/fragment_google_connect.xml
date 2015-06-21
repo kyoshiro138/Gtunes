@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_app"
+        tools:ignore="ContentDescription" />
 
     <Button
         android:id="@+id/btn_google_connect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:background="@android:color/holo_blue_light"
+        android:textColor="@android:color/white"
         android:text="@string/button_google_connect" />
 
+    <Button
+        android:id="@+id/btn_reset_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btn_google_connect"
+        android:background="@null"
+        android:textColor="@android:color/holo_blue_light"
+        android:text="@string/button_reset_data" />
 </RelativeLayout>

@@ -7,5 +7,5 @@
     <ListView
         android:id="@+id/list_google_files"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 </LinearLayout>

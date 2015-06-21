@@ -23,11 +23,33 @@ public class GoogleFile implements Parcelable {
         return mTitle;
     }
 
+    @JsonProperty("originalFilename")
+    private String mFileName;
+
+    public String getFileName() {
+        return mFileName;
+    }
+
+    public String getFileNameWithoutExtension() {
+        String suffix = String.format(".%s", mFileExtension);
+        if (mFileName.endsWith(suffix)) {
+            return mFileName.substring(0, mFileName.lastIndexOf(suffix));
+        }
+        return mFileName;
+    }
+
     @JsonProperty("downloadUrl")
     private String mUrl;
 
     public String getUrl() {
         return mUrl;
+    }
+
+    @JsonProperty("fileExtension")
+    private String mFileExtension;
+
+    public String getFileExtension() {
+        return mFileExtension;
     }
 
     public GoogleFile() {
