@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.jp.gtunes.R;
+import com.jp.gtunes.app.base.GtunesFragmentActivity;
 import com.jp.gtunes.app.musicplayer.MusicPlayerFragment;
 import com.jp.gtunes.app.musicplayer.MusicPlayerParam;
 import com.jp.gtunes.core.adapter.OnItemButtonClickListener;
@@ -46,6 +47,13 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         String url = "https://www.googleapis.com/drive/v2/files?q=mimeType='audio/mpeg'";
         GoogleServiceClient<FileResponseData> client = new GoogleServiceClient<>(getActivity(), "getFiles", url, FileResponseData.class, this);
         client.executeGet();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((GtunesFragmentActivity)getActivity()).updateScreenTitle("Google Music");
+        ((GtunesFragmentActivity)getActivity()).setButtonBackEnabled(true);
     }
 
     @Override

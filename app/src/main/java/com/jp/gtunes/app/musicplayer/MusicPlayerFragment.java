@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jp.gtunes.R;
+import com.jp.gtunes.app.base.GtunesFragmentActivity;
 import com.jp.gtunes.core.fragment.BaseParamFragment;
 import com.jp.gtunes.domain.GoogleFile;
 import com.jp.gtunes.utils.PreferenceUtils;
@@ -57,6 +58,13 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     @Override
     protected void loadData() {
         mAccessToken = (String) PreferenceUtils.getValue(getActivity(), "access_token", "", PreferenceUtils.PREFERENCE_TYPE_STRING);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((GtunesFragmentActivity)getActivity()).updateScreenTitle("");
+        ((GtunesFragmentActivity)getActivity()).setButtonBackEnabled(true);
     }
 
     @Override

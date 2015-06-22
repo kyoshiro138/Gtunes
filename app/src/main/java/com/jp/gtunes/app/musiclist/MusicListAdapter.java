@@ -38,7 +38,7 @@ public class MusicListAdapter extends BaseListAdapter<GoogleFile> {
     @Override
     protected void loadData(Object viewHolder, GoogleFile googleFile) {
         MusicItemViewHolder rowViewHolder = (MusicItemViewHolder) viewHolder;
-        rowViewHolder.mText.setText(googleFile.getTitle());
+        rowViewHolder.mText.setText(googleFile.getFileNameWithoutExtension());
         rowViewHolder.mBtnDownload.setTag(googleFile);
         rowViewHolder.mBtnDownload.setOnClickListener(new View.OnClickListener() {
             @Override

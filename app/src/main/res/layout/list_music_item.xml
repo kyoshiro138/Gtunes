@@ -25,7 +25,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/holo_purple"
-        android:src="@android:drawable/stat_sys_download"
+        android:src="@android:drawable/stat_sys_download_done"
         tools:ignore="ContentDescription" />
     <TextView
         android:id="@+id/list_item_music_title"

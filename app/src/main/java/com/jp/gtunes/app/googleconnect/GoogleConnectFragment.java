@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.jp.gtunes.R;
+import com.jp.gtunes.app.base.GtunesFragmentActivity;
 import com.jp.gtunes.app.musiclist.GoogleMusicListFragment;
 import com.jp.gtunes.core.fragment.BaseFragment;
 import com.jp.gtunes.core.googleservice.GoogleDriveApi;
@@ -54,6 +55,13 @@ public class GoogleConnectFragment extends BaseFragment implements View.OnClickL
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         driveApi.handleActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((GtunesFragmentActivity)getActivity()).updateScreenTitle("");
+        ((GtunesFragmentActivity)getActivity()).setButtonBackEnabled(false);
     }
 
     @Override
