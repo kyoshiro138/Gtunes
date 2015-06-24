@@ -1,11 +1,8 @@
 package com.jp.gtunes.app.musiclist;
 
-import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import com.jp.gtunes.R;
@@ -21,9 +18,6 @@ import com.jp.gtunes.service.client.GoogleServiceClient;
 import com.jp.gtunes.service.response.data.FileResponseData;
 import com.jp.gtunes.utils.PreferenceUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener, OnItemButtonClickListener {
     private ListView mFileList;
     private String mAccessToken;
@@ -38,6 +32,9 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         mFileList = (ListView) rootView.findViewById(R.id.list_google_files);
 
         mFileList.setOnItemClickListener(this);
+
+        // TODO: add billing service
+        // http://developer.android.com/google/play/billing/billing_integrate.html
     }
 
     @Override
@@ -52,8 +49,8 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
     @Override
     public void onResume() {
         super.onResume();
-        ((GtunesFragmentActivity)getActivity()).updateScreenTitle("Google Music");
-        ((GtunesFragmentActivity)getActivity()).setButtonBackEnabled(true);
+        ((GtunesFragmentActivity) getActivity()).updateScreenTitle("Google Music");
+        ((GtunesFragmentActivity) getActivity()).setButtonBackEnabled(true);
     }
 
     @Override
