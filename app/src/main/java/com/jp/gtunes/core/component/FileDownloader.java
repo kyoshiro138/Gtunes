@@ -4,7 +4,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 
 public class FileDownloader {
     private Context mContext;
@@ -18,24 +17,23 @@ public class FileDownloader {
     }
 
     public void startDownload(String nameOfFile) {
-        if(isDownloadManagerAvailabled()) {
+        if (isDownloadManagerAvailable()) {
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mFileUrl));
-//            request.setDescription("Some descrition");
-//            request.setTitle("Some title");
-// in order for this if to run, you must use the android 3.2 to compile your app
+
+            // in order for this if to run, you must use the android 3.2 to compile your app
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             }
             request.setDestinationInExternalPublicDir(mDownloadDirectoryPath, nameOfFile);
 
-// get download service and enqueue file
+            // get download service and enqueue file
             DownloadManager manager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
             manager.enqueue(request);
         }
     }
 
-    private boolean isDownloadManagerAvailabled() {
+    private boolean isDownloadManagerAvailable() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
     }
 }
