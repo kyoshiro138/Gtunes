@@ -27,12 +27,15 @@ import com.jp.gtunes.utils.PreferenceUtils;
 import com.jp.gtunes.utils.inappbilling.IabHelper;
 import com.jp.gtunes.utils.inappbilling.IabResult;
 import com.jp.gtunes.utils.inappbilling.Inventory;
+import com.jp.gtunes.utils.inappbilling.Purchase;
 import com.jp.gtunes.utils.inappbilling.SkuDetails;
 
-public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener, OnItemButtonClickListener, IabHelper.QueryInventoryFinishedListener, IabHelper.OnIabSetupFinishedListener {
+public class GoogleMusicListFragment extends BaseFragment implements OnServiceResponseListener<FileResponseData>, AdapterView.OnItemClickListener, OnItemButtonClickListener, IabHelper.QueryInventoryFinishedListener, IabHelper.OnIabSetupFinishedListener, IabHelper.OnIabPurchaseFinishedListener {
     private ListView mFileList;
     private String mAccessToken;
     private IabHelper mHelper;
+    private boolean mIsPurchasedEnabled = false;
+    private boolean mIsAppPurchased = false;
 
     @Override
     protected int getFragmentLayoutResource() {
@@ -44,10 +47,6 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         mFileList = (ListView) rootView.findViewById(R.id.list_google_files);
 
         mFileList.setOnItemClickListener(this);
-
-        // TODO: add billing service
-        // http://developer.android.com/google/play/billing/billing_integrate.html
-
     }
 
     @Override
@@ -57,10 +56,6 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         String url = "https://www.googleapis.com/drive/v2/files?q=mimeType='audio/mpeg'";
         GoogleServiceClient<FileResponseData> client = new GoogleServiceClient<>(getActivity(), "getFiles", url, FileResponseData.class, this);
         client.executeGet();
-
-//        Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
-//        serviceIntent.setPackage("com.android.vending");
-//        getActivity().bindService(serviceIntent, mBillingServiceConnection, Context.BIND_AUTO_CREATE);
 
         mHelper = new IabHelper(getActivity(), "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqzkRRCESZqE6MQr3i9U9n9/N4lA72SrSL4dnGZHTO5GhN5XdTcc/s6BuyS4KqHDwRkZW5ShpIFphKdaD50sxmBRtFIE2QeVqWvr3Yg2Pyo4mVh3Wpqdd7pp2nImra/NBzs9mRf/Jj9MX/8oQZeV77cQtMdMAd/kNlYFstXxxsLbou/ko2Ij7zcaC1XjzTeCSLtWJx/5Y+OtEoC5ZELsGwS3Ln6xY3nnqkq63ffWPiwMDnZOFb0wPqdgJuUD7ZDjDa6v6zC6w0mOsf9xncZ8pjAV5mbIW1HuBWhMdun2nFCGDUKISOgtftGDkryfRkthyWXYoHY+67rAj0HMGekDp2wIDAQAB");
         mHelper.startSetup(this);
@@ -74,10 +69,12 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        if (mBillingService != null) {
-            getActivity().unbindService(mBillingServiceConnection);
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mHelper != null) {
+            mHelper.dispose();
+            mHelper = null;
         }
     }
 
@@ -98,15 +95,20 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        MusicListAdapter adapter = (MusicListAdapter) mFileList.getAdapter();
-        MusicPlayerParam param = new MusicPlayerParam(adapter.getItemList(), position);
-        getNavigator().navigateTo(new MusicPlayerFragment(), param);
+        if (mIsAppPurchased) {
+            MusicListAdapter adapter = (MusicListAdapter) mFileList.getAdapter();
+            MusicPlayerParam param = new MusicPlayerParam(adapter.getItemList(), position);
+            getNavigator().navigateTo(new MusicPlayerFragment(), param);
+        } else {
+            if(mIsPurchasedEnabled) {
+                mHelper.launchPurchaseFlow(getActivity(), "test_purchase", 9999, this, "test");
+            }
+        }
     }
 
     @Override
     public void onButtonClick(View view) {
-        boolean isEnabled = false;
-        if (isEnabled) {
+        if (mIsAppPurchased) {
             GoogleFile googleFile = (GoogleFile) view.getTag();
 
             String url = String.format("%s&access_token=%s", googleFile.getUrl(), mAccessToken);
@@ -115,80 +117,18 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
             FileDownloader downloader = new FileDownloader(getActivity(), url, dir);
             downloader.startDownload(googleFile.getFileName());
         } else {
-//            try {
-//                Bundle bundle = mBillingService.getPurchases(3, getActivity().getPackageName(), "inapp", null);
-//
-//                if (bundle.getInt("RESPONSE_CODE") == 0) {
-//                    ArrayList<String> purchaseDataList = bundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
-//                    showToast(String.format("%d item", purchaseDataList.size()));
-//                }
-
-//                String developerPayload = "test";
-//                Bundle bundle = mBillingService.getBuyIntent(3, getActivity().getPackageName(), "test_purchase", "inapp", developerPayload);
-//                PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
-//
-//                if (bundle.getInt("RESPONSE_CODE") == 0 /*BILLING_RESPONSE_RESULT_OK*/) {
-//                    getActivity().startIntentSenderForResult(pendingIntent.getIntentSender(),
-//                            1001, new Intent(), 0, 0, 0);
-//                }
-
-
-//            List<String> additionalSkuList = new ArrayList<>();
-//            additionalSkuList.add("test_purchase");
-//            mHelper.queryInventoryAsync(true, additionalSkuList, this);
-
-//            } catch (RemoteException e) {
-//                e.printStackTrace();
-//            }
+            if(mIsPurchasedEnabled) {
+                mHelper.launchPurchaseFlow(getActivity(), "test_purchase", 9999, this, "test");
+            }
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!mHelper.handleActivityResult(requestCode, resultCode, data)) {
-            showToast("IAB is unhandled");
             super.onActivityResult(requestCode, resultCode, data);
-        } else {
-            showToast("IAB is handled");
         }
-//
-//        if (requestCode == 1001) {
-//            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
-//            String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
-//            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
-//
-//            if (resultCode == Activity.RESULT_OK) {
-//                try {
-//                    JSONObject jo = new JSONObject(purchaseData);
-//                    String sku = jo.getString("productId");
-//                    showToast("purchase ok " + sku);
-//                } catch (JSONException e) {
-//                    showToast("purchase failed");
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
     }
-
-    private IInAppBillingService mBillingService;
-    private ServiceConnection mBillingServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mBillingService = IInAppBillingService.Stub.asInterface(service);
-            try {
-                int response = mBillingService.isBillingSupported(3, getActivity().getPackageName(), "inapp");
-                Log.d("BILLING SERVICE", "response " + response);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                Log.d("BILLING SERVICE", "response failed");
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
 
     @Override
     public void onQueryInventoryFinished(IabResult result, Inventory inv) {
@@ -197,18 +137,22 @@ public class GoogleMusicListFragment extends BaseFragment implements OnServiceRe
         }
         SkuDetails skuDetails = inv.getSkuDetails("test_purchase");
         if (skuDetails != null) {
-            showToast("OK");
-        } else {
-            showToast("Failed");
+            mIsAppPurchased = true;
         }
     }
 
     @Override
     public void onIabSetupFinished(IabResult result) {
         if (result.isSuccess()) {
+            mIsPurchasedEnabled = true;
             mHelper.queryInventoryAsync(this);
-        } else {
-            showToast("Setup failed");
+        }
+    }
+
+    @Override
+    public void onIabPurchaseFinished(IabResult result, Purchase info) {
+        if(result.isSuccess()) {
+            mIsAppPurchased = true;
         }
     }
 }

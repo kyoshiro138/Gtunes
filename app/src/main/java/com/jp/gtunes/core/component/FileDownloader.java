@@ -26,7 +26,7 @@ public class FileDownloader {
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             }
             request.setDestinationInExternalPublicDir(mDownloadDirectoryPath, nameOfFile);
-
+            
             // get download service and enqueue file
             DownloadManager manager = (DownloadManager) mContext.getSystemService(Context.DOWNLOAD_SERVICE);
             manager.enqueue(request);
