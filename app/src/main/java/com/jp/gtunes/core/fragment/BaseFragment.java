@@ -2,7 +2,6 @@ package com.jp.gtunes.core.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -51,7 +50,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void showToast(CharSequence text) {
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        if (getActivity() != null) {
+            Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        }
     }
 
     protected abstract int getFragmentLayoutResource();

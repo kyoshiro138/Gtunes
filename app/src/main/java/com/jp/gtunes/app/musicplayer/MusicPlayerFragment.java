@@ -5,7 +5,6 @@ import android.media.MediaPlayer;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jp.gtunes.R;
 import com.jp.gtunes.app.base.GtunesFragmentActivity;
@@ -19,9 +18,10 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     private MediaPlayer mMediaPlayer;
     private String mAccessToken;
     private int mCurrentSongPosition;
+    private boolean mPlaybackEnabled = false;
     private List<GoogleFile> mSongList;
 
-    private ImageButton mBtnPlay, mBtnPause;
+    private ImageButton mBtnPlay, mBtnPause, mBtnPlayback, mBtnNext, mBtnPrevious;
     private TextView mTextMusicTitle;
     private TextView mTextCurrentTime, mTextTotalDuration;
 
@@ -34,15 +34,19 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     protected void bindView(View rootView) {
         mBtnPlay = (ImageButton) rootView.findViewById(R.id.btn_play);
         mBtnPause = (ImageButton) rootView.findViewById(R.id.btn_pause);
+        mBtnPlayback = (ImageButton) rootView.findViewById(R.id.btn_playback);
+        mBtnNext = (ImageButton) rootView.findViewById(R.id.btn_next_song);
+        mBtnPrevious = (ImageButton) rootView.findViewById(R.id.btn_previous_song);
 
         mTextMusicTitle = (TextView) rootView.findViewById(R.id.music_title_text);
         mTextCurrentTime = (TextView) rootView.findViewById(R.id.music_current_time_text);
         mTextTotalDuration = (TextView) rootView.findViewById(R.id.music_total_duration_text);
 
-        rootView.findViewById(R.id.btn_next_song).setOnClickListener(this);
-        rootView.findViewById(R.id.btn_previous_song).setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
         mBtnPause.setOnClickListener(this);
+        mBtnPlayback.setOnClickListener(this);
+        mBtnNext.setOnClickListener(this);
+        mBtnPrevious.setOnClickListener(this);
     }
 
     @Override
@@ -51,6 +55,8 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
             mSongList = param.getFiles();
             mCurrentSongPosition = param.getSelectedFileIndex();
 
+            mBtnPause.setVisibility(View.VISIBLE);
+            mBtnPlay.setVisibility(View.GONE);
             play();
         }
     }
@@ -63,8 +69,8 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     @Override
     public void onResume() {
         super.onResume();
-        ((GtunesFragmentActivity)getActivity()).updateScreenTitle("");
-        ((GtunesFragmentActivity)getActivity()).setButtonBackEnabled(true);
+        ((GtunesFragmentActivity) getActivity()).updateScreenTitle("");
+        ((GtunesFragmentActivity) getActivity()).setButtonBackEnabled(true);
     }
 
     @Override
@@ -96,6 +102,14 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
                 mBtnPause.setVisibility(View.GONE);
                 mBtnPlay.setVisibility(View.VISIBLE);
                 break;
+            case R.id.btn_playback:
+                mPlaybackEnabled = !mPlaybackEnabled;
+                if (mPlaybackEnabled) {
+                    mBtnPlayback.setBackgroundResource(R.drawable.bg_pink_circle);
+                } else {
+                    mBtnPlayback.setBackgroundResource(R.drawable.bg_gray_circle);
+                }
+                break;
             default:
                 break;
         }
@@ -104,11 +118,26 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         killMediaPlayer();
     }
 
     private void play() {
         mTextMusicTitle.setText(mSongList.get(mCurrentSongPosition).getFileNameWithoutExtension());
+        if (mCurrentSongPosition <= 0) {
+            mBtnPrevious.setBackgroundResource(R.drawable.bg_gray_circle);
+            mBtnNext.setBackgroundResource(R.drawable.bg_green_circle);
+        } else if (mCurrentSongPosition >= mSongList.size() - 1) {
+            mBtnNext.setBackgroundResource(R.drawable.bg_gray_circle);
+            mBtnPrevious.setBackgroundResource(R.drawable.bg_green_circle);
+        } else {
+            mBtnNext.setBackgroundResource(R.drawable.bg_green_circle);
+            mBtnPrevious.setBackgroundResource(R.drawable.bg_green_circle);
+        }
 
         String url = mSongList.get(mCurrentSongPosition).getUrl();
         try {
@@ -155,6 +184,9 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
                     if (mCurrentSongPosition < mSongList.size() - 1) {
                         mCurrentSongPosition++;
                         play();
+                    } else if (mPlaybackEnabled) {
+                        mCurrentSongPosition = 0;
+                        play();
                     }
                 }
             });
@@ -164,7 +196,6 @@ public class MusicPlayerFragment extends BaseParamFragment<MusicPlayerParam> imp
             mMediaPlayer.prepareAsync();
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "Can not play this file", Toast.LENGTH_SHORT).show();
         }
     }
 

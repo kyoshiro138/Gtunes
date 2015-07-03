@@ -12,7 +12,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
-        android:background="@android:color/holo_purple"
+        android:padding="8dp"
+        android:background="@drawable/bg_purple_circle"
         android:src="@android:drawable/ic_lock_silent_mode_off"
         tools:ignore="ContentDescription"/>
     <ImageButton
@@ -24,7 +25,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@android:color/holo_purple"
+        android:background="@drawable/bg_purple_circle"
         android:src="@android:drawable/stat_sys_download_done"
         tools:ignore="ContentDescription" />
     <TextView

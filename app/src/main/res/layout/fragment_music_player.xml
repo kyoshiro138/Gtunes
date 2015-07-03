@@ -27,22 +27,22 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="18sp"
-            android:text="00:00" />
+            android:text="00:00"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="/" />
+            android:text="/"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/music_total_duration_text"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="18sp"
-            android:text="00:00" />
+            android:text="00:00"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <RelativeLayout
@@ -60,6 +60,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginLeft="32dp"
             android:layout_marginStart="32dp"
+            android:background="@drawable/bg_green_circle"
             android:src="@android:drawable/ic_media_previous" />
 
         <ImageButton
@@ -67,6 +68,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_pink_circle"
             android:src="@android:drawable/ic_media_play" />
 
         <ImageButton
@@ -74,6 +76,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerInParent="true"
+            android:background="@drawable/bg_pink_circle"
             android:src="@android:drawable/ic_media_pause"
             android:visibility="gone" />
 
@@ -85,6 +88,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginEnd="32dp"
             android:layout_marginRight="32dp"
+            android:background="@drawable/bg_green_circle"
             android:src="@android:drawable/ic_media_next" />
     </RelativeLayout>
 
@@ -95,5 +99,18 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="140dp"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
+
+    <ImageButton
+        android:id="@+id/btn_playback"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/bg_gray_circle"
+        android:src="@android:drawable/ic_popup_sync" />
 </RelativeLayout>
