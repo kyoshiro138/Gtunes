@@ -4,18 +4,30 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-public class PreferenceUtils {
-    public static final String PREFERENCE_NAME = "com.jp.gtunes";
+public class ApplicationPreference {
 
     public static final String PREFERENCE_TYPE_STRING = "PREFERENCE_TYPE_STRING";
     public static final String PREFERENCE_TYPE_INTEGER = "PREFERENCE_TYPE_INTEGER";
     public static final String PREFERENCE_TYPE_BOOLEAN = "PREFERENCE_TYPE_BOOLEAN";
 
-    private static boolean mLogEnabled = true;
+    private Context mContext;
+    private SharedPreferences mSharedPreferences;
 
-    public static boolean saveValue(Context context, String key, Object value, String valueType) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+    public ApplicationPreference(Context context) {
+        this(context, context.getPackageName());
+    }
+
+    public ApplicationPreference(Context context, String PrefName) {
+        this(context, PrefName, Context.MODE_PRIVATE);
+    }
+
+    public ApplicationPreference(Context context, String PrefName, int mode) {
+        mContext = context;
+        mSharedPreferences = context.getSharedPreferences(PrefName, mode);
+    }
+
+    public boolean saveValue(String key, Object value, String valueType) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
 
         switch (valueType) {
             case PREFERENCE_TYPE_STRING:
@@ -28,7 +40,7 @@ public class PreferenceUtils {
                 editor.putBoolean(key, (boolean) value);
                 break;
             default:
-                Log("TYPE NOT SUPPORTED");
+                Log.d(mContext.getPackageName(), "PREFERENCE TYPE NOT SUPPORTED");
                 editor.apply();
                 return false;
         }
@@ -36,37 +48,29 @@ public class PreferenceUtils {
         editor.apply();
 
         String logMessage = String.format("PREFERENCE SAVED [TYPE:%s] [KEY:%s] [VALUE:%s]", valueType, key, value.toString());
-        Log(logMessage);
+        Log.d(mContext.getPackageName(), logMessage);
         return true;
     }
 
-    public static Object getValue(Context context, String key, Object defValue, String valueType) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-
+    public Object getValue(String key, Object defValue, String valueType) {
         Object value;
         switch (valueType) {
             case PREFERENCE_TYPE_STRING:
-                value = sharedPreferences.getString(key, String.valueOf(defValue));
+                value = mSharedPreferences.getString(key, String.valueOf(defValue));
                 break;
             case PREFERENCE_TYPE_INTEGER:
-                value = sharedPreferences.getInt(key, (int) defValue);
+                value = mSharedPreferences.getInt(key, (int) defValue);
                 break;
             case PREFERENCE_TYPE_BOOLEAN:
-                value = sharedPreferences.getBoolean(key, (boolean) defValue);
+                value = mSharedPreferences.getBoolean(key, (boolean) defValue);
                 break;
             default:
-                Log("TYPE NOT SUPPORTED");
+                Log.d(mContext.getPackageName(), "PREFERENCE TYPE NOT SUPPORTED");
                 return null;
         }
 
         String logMessage = String.format("PREFERENCE LOADED [TYPE:%s] [KEY:%s] [VALUE:%s]", valueType, key, value.toString());
-        Log(logMessage);
+        Log.d(mContext.getPackageName(), logMessage);
         return value;
-    }
-
-    private static void Log(String message) {
-        if (mLogEnabled) {
-            Log.d("SHARE PREFERENCE", message);
-        }
     }
 }
