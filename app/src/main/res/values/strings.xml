@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Gtunes</string>
     <string name="button_google_connect">Connect Google</string>
+    <string name="button_google_unlink">Unlink Google Drive</string>
     <string name="button_reset_data">Reset Data</string>
+    <string name="button_continue">Continue</string>
 </resources>

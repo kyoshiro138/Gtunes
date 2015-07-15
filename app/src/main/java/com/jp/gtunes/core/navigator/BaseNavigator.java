@@ -3,6 +3,7 @@ package com.jp.gtunes.core.navigator;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
@@ -65,15 +66,30 @@ public abstract class BaseNavigator {
 
     public final void navigateBack() {
         mFragmentManager.popBackStack();
+
+        Fragment fragment = mFragmentManager.findFragmentById(mContentFragmentId);
+        if (fragment != null && fragment instanceof Refreshable) {
+            ((Refreshable) fragment).onBackRefresh();
+        }
     }
 
     public final void navigateBack(int count) {
         for (int i = 0; i < count && mFragmentManager.getBackStackEntryCount() - i > 1; i++) {
             mFragmentManager.popBackStack();
         }
+
+        Fragment fragment = mFragmentManager.findFragmentById(mContentFragmentId);
+        if (fragment != null && fragment instanceof Refreshable) {
+            ((Refreshable) fragment).onBackRefresh();
+        }
     }
 
     public final void navigateBackToFirstLevelFragment() {
         mFragmentManager.popBackStackImmediate(1, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        Fragment fragment = mFragmentManager.findFragmentById(mContentFragmentId);
+        if (fragment != null && fragment instanceof Refreshable) {
+            ((Refreshable) fragment).onBackRefresh();
+        }
     }
 }

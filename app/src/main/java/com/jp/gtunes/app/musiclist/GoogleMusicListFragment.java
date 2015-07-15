@@ -12,6 +12,7 @@ import com.jp.gtunes.app.musicplayer.MusicPlayerFragment;
 import com.jp.gtunes.app.musicplayer.MusicPlayerParam;
 import com.jp.gtunes.core.adapter.OnItemButtonClickListener;
 import com.jp.gtunes.core.component.FileDownloader;
+import com.jp.gtunes.core.dialog.progress.SystemProgressDialog;
 import com.jp.gtunes.core.fragment.BaseFragment;
 import com.jp.gtunes.core.service.client.OnServiceResponseListener;
 import com.jp.gtunes.domain.GoogleFile;
@@ -34,6 +35,7 @@ public class GoogleMusicListFragment extends BaseFragment
     private String mAccessToken;
     private IabHelper mHelper;
     private boolean mIsAppPurchased = false;
+    private SystemProgressDialog mDialog;
 
     @Override
     protected int getFragmentLayoutResource() {
@@ -51,12 +53,16 @@ public class GoogleMusicListFragment extends BaseFragment
     protected void loadData() {
         mAccessToken = (String) PreferenceUtils.getValue(getActivity(), "access_token", "", PreferenceUtils.PREFERENCE_TYPE_STRING);
 
+        mHelper = ((GtunesFragmentActivity) getActivity()).getIabHelper();
+        mIsAppPurchased = (boolean) PreferenceUtils.getValue(getActivity(), "APP_PURCHASED", false, PreferenceUtils.PREFERENCE_TYPE_BOOLEAN);
+
+        mDialog = new SystemProgressDialog(getActivity());
+        mDialog.setMessage("Loading drive...!");
+        mDialog.show();
+
         String url = "https://www.googleapis.com/drive/v2/files?q=mimeType='audio/mpeg'";
         GoogleServiceClient<FileResponseData> client = new GoogleServiceClient<>(getActivity(), "getFiles", url, FileResponseData.class, this);
         client.executeGet();
-
-        mHelper = ((GtunesFragmentActivity) getActivity()).getIabHelper();
-        mIsAppPurchased = (boolean) PreferenceUtils.getValue(getActivity(), "APP_PURCHASED", false, PreferenceUtils.PREFERENCE_TYPE_BOOLEAN);
     }
 
     @Override
@@ -71,15 +77,27 @@ public class GoogleMusicListFragment extends BaseFragment
         MusicListAdapter adapter = new MusicListAdapter(getActivity(), response.getItems(), mIsAppPurchased);
         adapter.setOnItemButtonClickListener(this);
         mFileList.setAdapter(adapter);
+
+        if(mDialog!=null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
     }
 
     @Override
     public void onResponseFailed(String tag) {
+        if(mDialog!=null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+
         showToast("Unable to get media file from drive. Please go back and try again.");
     }
 
     @Override
     public void onParseError(String tag, String response) {
+        if(mDialog!=null && mDialog.isShowing()) {
+            mDialog.dismiss();
+        }
+
         showToast("Unable to get media file from drive. Please go back and try again.");
     }
 

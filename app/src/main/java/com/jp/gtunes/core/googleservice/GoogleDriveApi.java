@@ -50,6 +50,14 @@ public class GoogleDriveApi {
         }
     }
 
+    public void unlinkGoogleDrive(String token) {
+        try {
+            GoogleAuthUtil.clearToken(mActivity, token);
+        } catch (GoogleAuthException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showAccountPickerDialog() {
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
