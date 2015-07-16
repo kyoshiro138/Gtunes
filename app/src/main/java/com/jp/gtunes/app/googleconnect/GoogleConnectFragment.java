@@ -46,7 +46,7 @@ public class GoogleConnectFragment extends BaseFragment
         mDriveApi = new GoogleDriveApi(getActivity());
         mToken = (String) PreferenceUtils.getValue(getActivity(), "access_token", "", PreferenceUtils.PREFERENCE_TYPE_STRING);
         mIsConnected = mToken != null && !mToken.equals("");
-        PreferenceUtils.saveValue(getActivity(), "APP_PURCHASED", true, PreferenceUtils.PREFERENCE_TYPE_BOOLEAN);
+//        PreferenceUtils.saveValue(getActivity(), "APP_PURCHASED", true, PreferenceUtils.PREFERENCE_TYPE_BOOLEAN);
 
         mDialog = new SystemProgressDialog(getActivity());
         mDialog.setMessage("Connecting...!");
